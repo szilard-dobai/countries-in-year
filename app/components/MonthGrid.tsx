@@ -37,12 +37,12 @@ export default function MonthGrid({
 
   return (
     <section
-      className="space-y-2"
+      className="space-y-1 sm:space-y-2"
       aria-labelledby={`month-${year}-${month}`}
     >
       <h3
         id={`month-${year}-${month}`}
-        className="text-xl font-bold text-gray-900 dark:text-white mb-2"
+        className="text-base sm:text-xl font-bold text-gray-900 dark:text-white mb-1 sm:mb-2"
       >
         {MONTH_NAMES[month]}
       </h3>

@@ -42,19 +42,19 @@ function DateCell({ date, visits, onRemoveVisit, flagDisplayMode }: DateCellProp
     const code = countryCode.toUpperCase()
     const FlagComponent = FlagIcons[code as keyof typeof FlagIcons]
     if (!FlagComponent) return null
-    return <FlagComponent className="w-8 h-6" />
+    return <FlagComponent className="w-6 h-4 sm:w-8 sm:h-6" />
   }
 
   const renderFlag = (countryCode: string) => {
     if (flagDisplayMode === 'icon') {
       return getFlagIcon(countryCode)
     }
-    return <div className="text-2xl leading-none">{getFlagEmoji(countryCode)}</div>
+    return <div className="text-lg sm:text-2xl leading-none">{getFlagEmoji(countryCode)}</div>
   }
 
   return (
     <div
-      className="aspect-square p-1 flex items-center justify-center group relative"
+      className="aspect-square p-0.5 sm:p-1 flex items-center justify-center group relative"
       role="gridcell"
       aria-label={hasVisits ? `${dateLabel}, visited ${country?.name || cellVisits[0].countryCode}` : `${dateLabel}, no visits`}
     >
@@ -71,7 +71,7 @@ function DateCell({ date, visits, onRemoveVisit, flagDisplayMode }: DateCellProp
             </button>
           </>
         ) : (
-          <span className={`text-xs font-medium ${today ? 'text-red-500 font-bold' : 'text-gray-900 dark:text-white'}`}>
+          <span className={`text-[10px] sm:text-xs font-medium ${today ? 'text-red-500 font-bold' : 'text-gray-900 dark:text-white'}`}>
             {dayNumber}
           </span>
         )}
