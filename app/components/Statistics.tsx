@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import type { CalendarData } from '../lib/types'
 import {
   calculateTotalCountriesVisited,
@@ -16,19 +17,36 @@ interface StatisticsProps {
 }
 
 export default function Statistics({ calendarData, year }: StatisticsProps) {
-  const visits = year
-    ? calendarData.visits.filter((visit) => visit.date.getFullYear() === year)
-    : calendarData.visits
+  const visits = useMemo(
+    () =>
+      year
+        ? calendarData.visits.filter((visit) => visit.date.getFullYear() === year)
+        : calendarData.visits,
+    [calendarData.visits, year]
+  )
 
-  const totalCountries = calculateTotalCountriesVisited(visits)
-  const totalVisits = calculateTotalVisits(visits)
-  const averageVisits = calculateAverageVisitsPerCountry(visits)
-  const mostVisited = calculateMostVisitedCountries(visits, 5)
+  const stats = useMemo(() => {
+    const totalCountries = calculateTotalCountriesVisited(visits)
+    const totalVisits = calculateTotalVisits(visits)
+    const averageVisits = calculateAverageVisitsPerCountry(visits)
+    const mostVisited = calculateMostVisitedCountries(visits, 5)
 
-  const rankingItems: CountryRankingItem[] = mostVisited.map((item, index) => ({
-    ...item,
-    rank: index + 1,
-  }))
+    return {
+      totalCountries,
+      totalVisits,
+      averageVisits,
+      mostVisited,
+    }
+  }, [visits])
+
+  const rankingItems: CountryRankingItem[] = useMemo(
+    () =>
+      stats.mostVisited.map((item, index) => ({
+        ...item,
+        rank: index + 1,
+      })),
+    [stats.mostVisited]
+  )
 
   return (
     <div className="space-y-6">
@@ -40,27 +58,27 @@ export default function Statistics({ calendarData, year }: StatisticsProps) {
         <div className="grid grid-cols-1 gap-3">
           <StatisticsCard
             title="Countries Visited"
-            value={totalCountries}
-            subtitle={totalCountries === 1 ? 'country' : 'countries'}
+            value={stats.totalCountries}
+            subtitle={stats.totalCountries === 1 ? 'country' : 'countries'}
           />
 
           <StatisticsCard
             title="Total Visits"
-            value={totalVisits}
-            subtitle={totalVisits === 1 ? 'visit' : 'visits'}
+            value={stats.totalVisits}
+            subtitle={stats.totalVisits === 1 ? 'visit' : 'visits'}
           />
 
-          {totalCountries > 0 && (
+          {stats.totalCountries > 0 && (
             <StatisticsCard
               title="Average"
-              value={averageVisits.toFixed(1)}
+              value={stats.averageVisits.toFixed(1)}
               subtitle="visits per country"
             />
           )}
         </div>
       </div>
 
-      {mostVisited.length > 0 && (
+      {stats.mostVisited.length > 0 && (
         <div>
           <h3 className="text-sm font-medium mb-3 text-gray-900 dark:text-white">
             Most Visited Countries
@@ -69,7 +87,7 @@ export default function Statistics({ calendarData, year }: StatisticsProps) {
         </div>
       )}
 
-      {totalVisits === 0 && (
+      {stats.totalVisits === 0 && (
         <div className="text-center py-8 text-gray-500 dark:text-gray-400">
           <p className="text-sm">No visits recorded yet</p>
           <p className="text-xs mt-1">
