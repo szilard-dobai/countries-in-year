@@ -1,4 +1,5 @@
 import { getCountryByCode } from '../lib/countries'
+import * as flags from 'country-flag-icons/react/3x2'
 
 interface FlagPlaceholderProps {
   countryCode: string
@@ -20,16 +21,10 @@ export default function FlagPlaceholder({ countryCode }: FlagPlaceholderProps) {
     )
   }
 
-  let FlagComponent
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    FlagComponent = require(
-      `country-flag-icons/react/3x2/${countryCode}`
-    ).default
-  } catch {
-    FlagComponent = null
-  }
+  // Get the flag component from the imported flags object
+  const FlagComponent = flags[countryCode as keyof typeof flags] as
+    | React.ComponentType<React.SVGProps<SVGSVGElement>>
+    | undefined
 
   if (!FlagComponent) {
     return (
@@ -39,10 +34,5 @@ export default function FlagPlaceholder({ countryCode }: FlagPlaceholderProps) {
     )
   }
 
-  return (
-    <FlagComponent
-      className="w-full h-full rounded-sm object-cover"
-      title={country.name}
-    />
-  )
+  return <FlagComponent className="w-full h-full rounded-sm object-cover" />
 }
