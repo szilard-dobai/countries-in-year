@@ -1,11 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import CalendarGrid from './components/CalendarGrid'
 import CountryInput from './components/CountryInput'
 import ExportButton from './components/ExportButton'
 import DeveloperMode from './components/DeveloperMode'
 
 export default function Home() {
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950">
       <header className="border-b border-gray-200 dark:border-gray-800">
@@ -16,7 +19,8 @@ export default function Home() {
             </h1>
             <select
               className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-zinc-900 text-gray-900 dark:text-white"
-              defaultValue={new Date().getFullYear()}
+              value={selectedYear}
+              onChange={(e) => setSelectedYear(Number(e.target.value))}
             >
               <option value={new Date().getFullYear()}>
                 {new Date().getFullYear()}
@@ -35,7 +39,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
           <div className="space-y-6">
-            <CalendarGrid />
+            <CalendarGrid year={selectedYear} />
           </div>
 
           <aside className="space-y-6">
