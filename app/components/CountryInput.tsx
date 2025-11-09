@@ -161,7 +161,7 @@ export default function CountryInput({
               {getDateRangeText()}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
+          <PopoverContent className="w-auto p-0" align="end" sideOffset={8}>
             <div className="p-3 border-b flex items-center justify-between">
               <p className="text-sm font-medium">Select date range</p>
               {dateRange?.from && (

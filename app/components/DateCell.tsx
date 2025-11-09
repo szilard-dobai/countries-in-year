@@ -61,7 +61,7 @@ function DateCell({ date, visits, onRemoveVisit }: DateCellProps) {
         </div>
         <button
           onClick={() => onRemoveVisit(cellVisits[0].id)}
-          className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 sm:opacity-100 transition-opacity text-[10px] hover:bg-red-700 active:bg-red-800"
+          className="absolute top-0.5 right-0.5 w-5 h-5 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 sm:opacity-100 transition-opacity text-[10px] hover:bg-red-700 active:bg-red-800 cursor-pointer"
           aria-label={`Remove ${country?.name || cellVisits[0].countryCode} visit`}
         >
           ×
@@ -88,7 +88,7 @@ function DateCell({ date, visits, onRemoveVisit }: DateCellProps) {
             <FlagPlaceholder countryCode={cellVisits[0].countryCode} />
             <button
               onClick={() => onRemoveVisit(cellVisits[0].id)}
-              className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/flag1:opacity-100 sm:opacity-100 transition-opacity text-[8px] hover:bg-red-700 active:bg-red-800"
+              className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/flag1:opacity-100 sm:opacity-100 transition-opacity text-[8px] hover:bg-red-700 active:bg-red-800 cursor-pointer"
               aria-label={`Remove ${country1?.name || cellVisits[0].countryCode} visit`}
             >
               ×
@@ -98,7 +98,7 @@ function DateCell({ date, visits, onRemoveVisit }: DateCellProps) {
             <FlagPlaceholder countryCode={cellVisits[1].countryCode} />
             <button
               onClick={() => onRemoveVisit(cellVisits[1].id)}
-              className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/flag2:opacity-100 sm:opacity-100 transition-opacity text-[8px] hover:bg-red-700 active:bg-red-800"
+              className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-red-600 text-white rounded-full flex items-center justify-center opacity-0 group-hover/flag2:opacity-100 sm:opacity-100 transition-opacity text-[8px] hover:bg-red-700 active:bg-red-800 cursor-pointer"
               aria-label={`Remove ${country2?.name || cellVisits[1].countryCode} visit`}
             >
               ×

@@ -52,32 +52,26 @@ export default function Statistics({ calendarData, year }: StatisticsProps) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-          Statistics {year && `(${year})`}
-        </h2>
+      <div className="grid grid-cols-1 gap-3">
+        <StatisticsCard
+          title="Countries Visited"
+          value={stats.totalCountries}
+          subtitle={stats.totalCountries === 1 ? 'country' : 'countries'}
+        />
 
-        <div className="grid grid-cols-1 gap-3">
+        <StatisticsCard
+          title="Total Visits"
+          value={stats.totalVisits}
+          subtitle={stats.totalVisits === 1 ? 'visit' : 'visits'}
+        />
+
+        {stats.totalCountries > 0 && (
           <StatisticsCard
-            title="Countries Visited"
-            value={stats.totalCountries}
-            subtitle={stats.totalCountries === 1 ? 'country' : 'countries'}
+            title="Average"
+            value={stats.averageVisits.toFixed(1)}
+            subtitle="visits per country"
           />
-
-          <StatisticsCard
-            title="Total Visits"
-            value={stats.totalVisits}
-            subtitle={stats.totalVisits === 1 ? 'visit' : 'visits'}
-          />
-
-          {stats.totalCountries > 0 && (
-            <StatisticsCard
-              title="Average"
-              value={stats.averageVisits.toFixed(1)}
-              subtitle="visits per country"
-            />
-          )}
-        </div>
+        )}
       </div>
 
       {stats.mostVisited.length > 0 && (

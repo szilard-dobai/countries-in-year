@@ -242,7 +242,7 @@ function ImportConfirmationModal({
                 onChange={(e) =>
                   onStrategyChange(e.target.value as MergeStrategy)
                 }
-                className="mt-0.5"
+                className="mt-0.5 cursor-pointer"
               />
               <div className="flex-1">
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -266,7 +266,7 @@ function ImportConfirmationModal({
                 onChange={(e) =>
                   onStrategyChange(e.target.value as MergeStrategy)
                 }
-                className="mt-0.5"
+                className="mt-0.5 cursor-pointer"
               />
               <div className="flex-1">
                 <div className="text-sm font-medium text-gray-900 dark:text-white">

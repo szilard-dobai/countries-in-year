@@ -92,7 +92,13 @@ export default function Home() {
 
           <aside className="space-y-4">
             <Card className="border-0 shadow-lg bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
-              <CardContent className="pt-6">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-2xl">📊</span>
+                  Statistics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <Statistics calendarData={calendarData} year={selectedYear} />
               </CardContent>
             </Card>
