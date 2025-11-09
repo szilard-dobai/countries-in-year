@@ -16,12 +16,12 @@ const CalendarGrid = forwardRef<HTMLDivElement, CalendarGridProps>(
 
     return (
       <div ref={ref} className="space-y-8" data-export-target="calendar">
-        <div className="mb-6">
-          <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white">
+        <div className="mb-6 text-center">
+          <h2 className="text-5xl font-extrabold bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
             {year}
           </h2>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {Array.from({ length: 12 }, (_, month) => (
             <MonthGrid
               key={month}

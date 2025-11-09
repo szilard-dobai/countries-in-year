@@ -81,7 +81,7 @@ describe('DateCell', () => {
       const cell = container.querySelector('[role="gridcell"]')
       expect(cell).toHaveClass('aspect-square')
       expect(cell).toHaveClass('border')
-      expect(cell).toHaveClass('rounded-lg')
+      expect(cell).toHaveClass('rounded-md')
     })
   })
 

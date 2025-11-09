@@ -20,17 +20,19 @@ function DateCell({ date, visits, onRemoveVisit }: DateCellProps) {
   const dayNumber = date.getDate()
 
   const baseClasses =
-    'aspect-square flex items-center justify-center border border-gray-200 dark:border-gray-800 rounded-lg transition-colors'
-  const todayClasses = today ? 'ring-2 ring-blue-500 dark:ring-blue-400' : ''
+    'aspect-square flex items-center justify-center border border-gray-100 dark:border-gray-800 rounded-md transition-all hover:scale-105'
+  const todayClasses = today
+    ? 'ring-2 ring-blue-500 dark:ring-blue-400 shadow-lg'
+    : ''
 
   if (cellVisits.length === 0) {
     return (
       <div
-        className={`${baseClasses} ${todayClasses}`}
+        className={`${baseClasses} ${todayClasses} hover:bg-gray-50 dark:hover:bg-gray-800/50`}
         role="gridcell"
         aria-label={`${date.toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}, no visits`}
       >
-        <span className="text-sm text-gray-400 dark:text-gray-600">
+        <span className="text-xs font-medium text-gray-400 dark:text-gray-500">
           {dayNumber}
         </span>
       </div>
@@ -45,7 +47,7 @@ function DateCell({ date, visits, onRemoveVisit }: DateCellProps) {
     })
     return (
       <div
-        className={`${baseClasses} ${todayClasses} bg-gray-50 dark:bg-gray-900 group relative`}
+        className={`${baseClasses} ${todayClasses} bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 group relative hover:shadow-md`}
         role="gridcell"
         aria-label={`${dateLabel}, visited ${country?.name || cellVisits[0].countryCode}`}
       >
@@ -77,7 +79,7 @@ function DateCell({ date, visits, onRemoveVisit }: DateCellProps) {
     })
     return (
       <div
-        className={`${baseClasses} ${todayClasses} bg-gray-50 dark:bg-gray-900 group relative`}
+        className={`${baseClasses} ${todayClasses} bg-linear-to-br from-green-50 to-emerald-50 dark:from-green-950/30 dark:to-emerald-950/30 group relative hover:shadow-md`}
         role="gridcell"
         aria-label={`${dateLabel}, visited ${country1?.name || cellVisits[0].countryCode} and ${country2?.name || cellVisits[1].countryCode}`}
       >

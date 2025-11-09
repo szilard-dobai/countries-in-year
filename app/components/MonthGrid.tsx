@@ -35,12 +35,15 @@ export default function MonthGrid({
   const weeks = getMonthData(year, month)
 
   return (
-    <section className="space-y-2" aria-labelledby={`month-${year}-${month}`}>
+    <section
+      className="p-4 rounded-xl border-0 bg-white dark:bg-zinc-900 shadow-lg hover:shadow-xl transition-shadow"
+      aria-labelledby={`month-${year}-${month}`}
+    >
       <h3
         id={`month-${year}-${month}`}
-        className="text-sm font-medium text-gray-900 dark:text-white"
+        className="text-base font-semibold text-gray-900 dark:text-white mb-3"
       >
-        {MONTH_NAMES[month]} {year}
+        {MONTH_NAMES[month]}
       </h3>
 
       <div
@@ -53,7 +56,7 @@ export default function MonthGrid({
             <div
               key={day}
               role="columnheader"
-              className="text-center text-xs font-medium text-gray-500 dark:text-gray-400"
+              className="text-center text-[10px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider"
             >
               {day}
             </div>

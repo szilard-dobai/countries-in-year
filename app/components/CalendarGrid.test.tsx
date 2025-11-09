@@ -105,8 +105,8 @@ describe('CalendarGrid', () => {
       )
 
       const gridContainer = container.querySelector('.grid')
-      expect(gridContainer).toHaveClass('gap-6')
-      expect(gridContainer).toHaveClass('sm:gap-8')
+      expect(gridContainer).toHaveClass('gap-4')
+      expect(gridContainer).toHaveClass('sm:gap-6')
     })
   })
 

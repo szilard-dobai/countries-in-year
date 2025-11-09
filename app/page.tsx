@@ -44,13 +44,18 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950">
-      <header className="border-b border-gray-200 dark:border-gray-800">
-        <div className="container mx-auto px-4 py-6">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 via-white to-gray-50 dark:from-zinc-950 dark:via-zinc-900 dark:to-zinc-950">
+      <header className="border-b border-gray-200/50 dark:border-gray-800/50 backdrop-blur-xl bg-white/80 dark:bg-zinc-950/80 sticky top-0 z-10">
+        <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-              Countries in Year
-            </h1>
+            <div>
+              <h1 className="text-3xl font-bold bg-linear-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400 bg-clip-text text-transparent">
+                Countries in Year
+              </h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Track your travel adventures
+              </p>
+            </div>
             <Select
               value={selectedYear.toString()}
               onValueChange={(value) => setSelectedYear(Number(value))}
@@ -75,7 +80,7 @@ export default function Home() {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-6">
           <div className="space-y-6">
             <CalendarGrid
               ref={calendarRef}
@@ -85,16 +90,19 @@ export default function Home() {
             />
           </div>
 
-          <aside className="space-y-6">
-            <Card>
+          <aside className="space-y-4">
+            <Card className="border-0 shadow-lg bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
               <CardContent className="pt-6">
                 <Statistics calendarData={calendarData} year={selectedYear} />
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Add Visit</CardTitle>
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-2xl">✈️</span>
+                  Add Visit
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <CountryInput
@@ -104,9 +112,12 @@ export default function Home() {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Data Management</CardTitle>
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-2xl">💾</span>
+                  Data Management
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <ExportButton calendarData={calendarData} />
@@ -126,14 +137,17 @@ export default function Home() {
       </main>
 
       <footer className="container mx-auto px-4 py-8">
-        <details className="rounded-lg border border-gray-200 dark:border-gray-800">
-          <summary className="px-4 py-3 cursor-pointer font-medium text-sm text-gray-700 dark:text-gray-300">
-            Developer Mode
-          </summary>
-          <div className="px-4 py-3 border-t border-gray-200 dark:border-gray-800">
-            <DeveloperMode />
-          </div>
-        </details>
+        <Card className="border-0 shadow-lg">
+          <details>
+            <summary className="px-6 py-4 cursor-pointer font-medium text-sm hover:bg-accent/50 transition-colors rounded-lg list-none flex items-center gap-2">
+              <span className="text-lg">🔧</span>
+              Developer Mode
+            </summary>
+            <div className="px-6 pb-4 pt-2">
+              <DeveloperMode />
+            </div>
+          </details>
+        </Card>
       </footer>
     </div>
   )

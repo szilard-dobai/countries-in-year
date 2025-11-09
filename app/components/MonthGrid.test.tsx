@@ -60,7 +60,7 @@ describe('MonthGrid', () => {
         />
       )
 
-      expect(screen.getByText('January 2024')).toBeInTheDocument()
+      expect(screen.getByText('January')).toBeInTheDocument()
     })
 
     it('renders correct month names for all months', () => {
@@ -91,7 +91,7 @@ describe('MonthGrid', () => {
           />
         )
 
-        expect(screen.getByText(`${monthName} 2024`)).toBeInTheDocument()
+        expect(screen.getByText(monthName)).toBeInTheDocument()
         unmount()
       })
     })
@@ -277,7 +277,7 @@ describe('MonthGrid', () => {
         />
       )
 
-      const heading = screen.getByText('April 2024')
+      const heading = screen.getByText('April')
       expect(heading).toHaveAttribute('id', 'month-2024-3')
     })
 
@@ -402,7 +402,7 @@ describe('MonthGrid', () => {
         />
       )
 
-      expect(screen.getByText('January 2024')).toBeInTheDocument()
+      expect(screen.getByText('January')).toBeInTheDocument()
     })
 
     it('handles month with many weeks', () => {
@@ -442,7 +442,7 @@ describe('MonthGrid', () => {
         />
       )
 
-      expect(screen.getByText('December 2025')).toBeInTheDocument()
+      expect(screen.getByText('December')).toBeInTheDocument()
     })
 
     it('handles month with all null dates in first week', () => {
@@ -462,7 +462,7 @@ describe('MonthGrid', () => {
       )
 
       // Verify the component renders without crashing
-      expect(screen.getByText('January 2024')).toBeInTheDocument()
+      expect(screen.getByText('January')).toBeInTheDocument()
 
       // Verify we have the grid role
       expect(screen.getByRole('grid')).toBeInTheDocument()
