@@ -6,6 +6,8 @@ import { loadCalendarData, saveCalendarData } from './lib/storage'
 import CalendarGrid from './components/CalendarGrid'
 import CountryInput from './components/CountryInput'
 import ExportButton from './components/ExportButton'
+import ImportButton from './components/ImportButton'
+import Statistics from './components/Statistics'
 import DeveloperMode from './components/DeveloperMode'
 
 function getInitialData(): CalendarData {
@@ -70,6 +72,10 @@ export default function Home() {
 
           <aside className="space-y-6">
             <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
+              <Statistics calendarData={calendarData} year={selectedYear} />
+            </div>
+
+            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
               <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                 Add Visit
               </h2>
@@ -80,7 +86,16 @@ export default function Home() {
             </div>
 
             <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
-              <ExportButton />
+              <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+                Data Management
+              </h2>
+              <div className="space-y-2">
+                <ExportButton calendarData={calendarData} />
+                <ImportButton
+                  currentData={calendarData}
+                  onImport={handleDataChange}
+                />
+              </div>
             </div>
           </aside>
         </div>
