@@ -58,8 +58,66 @@ describe('statistics', () => {
       expect(calculateTotalVisits(visits)).toBe(1)
     })
 
-    it('returns total count including repeat visits', () => {
+    it('returns total count of separate visits (non-consecutive days)', () => {
+      // mockVisits has 6 entries on different dates = 6 separate visits
       expect(calculateTotalVisits(mockVisits)).toBe(6)
+    })
+
+    it('counts consecutive days in same country as 1 visit', () => {
+      const visits: CountryVisit[] = [
+        { id: '1', countryCode: 'UG', date: new Date(2025, 3, 13) }, // Apr 13
+        { id: '2', countryCode: 'UG', date: new Date(2025, 3, 14) }, // Apr 14
+        { id: '3', countryCode: 'UG', date: new Date(2025, 3, 15) }, // Apr 15
+        { id: '4', countryCode: 'UG', date: new Date(2025, 3, 16) }, // Apr 16
+        { id: '5', countryCode: 'UG', date: new Date(2025, 3, 17) }, // Apr 17
+        { id: '6', countryCode: 'UG', date: new Date(2025, 3, 18) }, // Apr 18
+      ]
+      // 6 consecutive days in Uganda = 1 visit
+      expect(calculateTotalVisits(visits)).toBe(1)
+    })
+
+    it('counts overlapping countries on same day as separate visits', () => {
+      const visits: CountryVisit[] = [
+        { id: '1', countryCode: 'MA', date: new Date(2025, 3, 13) }, // Morocco Apr 13
+        { id: '2', countryCode: 'UG', date: new Date(2025, 3, 13) }, // Uganda Apr 13
+        { id: '3', countryCode: 'UG', date: new Date(2025, 3, 14) }, // Uganda Apr 14
+        { id: '4', countryCode: 'UG', date: new Date(2025, 3, 15) }, // Uganda Apr 15
+      ]
+      // Morocco on Apr 13 (1 visit) + Uganda from Apr 13-15 (1 visit) = 2 visits
+      expect(calculateTotalVisits(visits)).toBe(2)
+    })
+
+    it('counts return to same country as separate visit', () => {
+      const visits: CountryVisit[] = [
+        { id: '1', countryCode: 'MA', date: new Date(2025, 3, 13) }, // Morocco Apr 13
+        { id: '2', countryCode: 'UG', date: new Date(2025, 3, 13) }, // Uganda Apr 13
+        { id: '3', countryCode: 'UG', date: new Date(2025, 3, 14) }, // Uganda Apr 14
+        { id: '4', countryCode: 'UG', date: new Date(2025, 3, 15) }, // Uganda Apr 15
+        { id: '5', countryCode: 'MA', date: new Date(2025, 3, 15) }, // Morocco Apr 15
+      ]
+      // Morocco Apr 13 (1) + Uganda Apr 13-15 (2) + Morocco Apr 15 (3) = 3 visits
+      expect(calculateTotalVisits(visits)).toBe(3)
+    })
+
+    it('handles gap in consecutive days as separate visits', () => {
+      const visits: CountryVisit[] = [
+        { id: '1', countryCode: 'UG', date: new Date(2025, 3, 13) }, // Apr 13
+        { id: '2', countryCode: 'UG', date: new Date(2025, 3, 14) }, // Apr 14
+        { id: '3', countryCode: 'UG', date: new Date(2025, 3, 16) }, // Apr 16 (gap)
+        { id: '4', countryCode: 'UG', date: new Date(2025, 3, 17) }, // Apr 17
+      ]
+      // Uganda Apr 13-14 (1 visit) + Uganda Apr 16-17 (1 visit) = 2 visits
+      expect(calculateTotalVisits(visits)).toBe(2)
+    })
+
+    it('handles unsorted visits correctly', () => {
+      const visits: CountryVisit[] = [
+        { id: '3', countryCode: 'UG', date: new Date(2025, 3, 15) }, // Out of order
+        { id: '1', countryCode: 'UG', date: new Date(2025, 3, 13) },
+        { id: '2', countryCode: 'UG', date: new Date(2025, 3, 14) },
+      ]
+      // Should sort and count as 1 visit (Apr 13-15)
+      expect(calculateTotalVisits(visits)).toBe(1)
     })
   })
 

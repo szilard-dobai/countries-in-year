@@ -9,10 +9,56 @@ export function calculateTotalCountriesVisited(visits: CountryVisit[]): number {
 }
 
 /**
- * Calculates the total number of visits (including repeat visits to same country)
+ * Calculates the total number of visits (a visit is a continuous stay in one country)
+ * Consecutive days in the same country count as 1 visit
+ * Examples:
+ * - Uganda on 13.04.2025 = 1 visit
+ * - Uganda from 13.04.2025 to 18.04.2025 = 1 visit (continuous)
+ * - Morocco on 13.04.2025 + Uganda from 13.04.2025 to 15.04.2025 = 2 visits
+ * - Morocco on 13.04 + Uganda from 13.04 to 15.04 + Morocco on 15.04 = 3 visits
  */
 export function calculateTotalVisits(visits: CountryVisit[]): number {
-  return visits.length
+  if (visits.length === 0) return 0
+
+  // Sort visits by date
+  const sortedVisits = [...visits].sort(
+    (a, b) => a.date.getTime() - b.date.getTime()
+  )
+
+  let visitCount = 0
+  let currentCountry: string | null = null
+  let lastDate: Date | null = null
+
+  for (const visit of sortedVisits) {
+    const isConsecutiveDay =
+      lastDate &&
+      currentCountry === visit.countryCode &&
+      isNextDay(lastDate, visit.date)
+
+    if (!isConsecutiveDay) {
+      // Start a new visit
+      visitCount++
+      currentCountry = visit.countryCode
+    }
+
+    lastDate = visit.date
+  }
+
+  return visitCount
+}
+
+/**
+ * Helper function to check if date2 is the next day after date1
+ */
+function isNextDay(date1: Date, date2: Date): boolean {
+  const nextDay = new Date(date1)
+  nextDay.setDate(nextDay.getDate() + 1)
+
+  return (
+    nextDay.getFullYear() === date2.getFullYear() &&
+    nextDay.getMonth() === date2.getMonth() &&
+    nextDay.getDate() === date2.getDate()
+  )
 }
 
 /**
