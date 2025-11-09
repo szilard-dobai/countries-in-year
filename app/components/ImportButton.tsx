@@ -5,6 +5,8 @@ import {
   calculateTotalCountriesVisited,
   calculateTotalVisits,
 } from '../lib/statistics'
+import { Button } from '@/components/ui/button'
+import { Upload, CheckCircle2, XCircle } from 'lucide-react'
 
 interface ImportButtonProps {
   currentData: CalendarData
@@ -98,13 +100,6 @@ export default function ImportButton({
     setMergeStrategy('merge')
   }
 
-  const buttonText =
-    status === 'success'
-      ? 'Imported!'
-      : status === 'error'
-        ? 'Import failed'
-        : 'Import JSON'
-
   return (
     <>
       <input
@@ -116,20 +111,36 @@ export default function ImportButton({
         aria-label="Import calendar data file"
       />
 
-      <button
+      <Button
         onClick={() => fileInputRef.current?.click()}
         disabled={status !== 'idle'}
-        className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
+        className="w-full"
+        variant={
           status === 'success'
-            ? 'bg-green-600 text-white'
+            ? 'default'
             : status === 'error'
-              ? 'bg-red-600 text-white'
-              : 'bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700'
-        }`}
+              ? 'destructive'
+              : 'outline'
+        }
         aria-label="Import calendar data from JSON file"
       >
-        {buttonText}
-      </button>
+        {status === 'success' ? (
+          <>
+            <CheckCircle2 className="size-4" />
+            Imported!
+          </>
+        ) : status === 'error' ? (
+          <>
+            <XCircle className="size-4" />
+            Import failed
+          </>
+        ) : (
+          <>
+            <Upload className="size-4" />
+            Import JSON
+          </>
+        )}
+      </Button>
 
       {showModal && importedData && (
         <ImportConfirmationModal
@@ -271,22 +282,20 @@ function ImportConfirmationModal({
         </div>
 
         <div className="flex gap-3 pt-2">
-          <button
+          <Button
             onClick={onCancel}
-            className="flex-1 px-4 py-2 rounded-lg font-medium border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            variant="outline"
+            className="flex-1"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onConfirm}
-            className={`flex-1 px-4 py-2 rounded-lg font-medium text-white transition-colors ${
-              mergeStrategy === 'replace'
-                ? 'bg-red-600 hover:bg-red-700'
-                : 'bg-blue-600 hover:bg-blue-700'
-            }`}
+            variant={mergeStrategy === 'replace' ? 'destructive' : 'default'}
+            className="flex-1"
           >
             {mergeStrategy === 'replace' ? 'Replace Data' : 'Merge Data'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

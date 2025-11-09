@@ -671,7 +671,7 @@ describe('CountryInput', () => {
         const errorMessage = screen.getByText(
           /end date cannot be before start date/i
         )
-        expect(errorMessage).toHaveClass('text-red-600')
+        expect(errorMessage).toHaveClass('text-destructive')
       })
     })
 
@@ -746,7 +746,7 @@ describe('CountryInput', () => {
         selector: 'input',
       })
       expect(countryInput).toHaveClass('border')
-      expect(countryInput).toHaveClass('rounded-lg')
+      expect(countryInput).toHaveClass('rounded-md')
     })
 
     it('submit button shows disabled state', () => {
@@ -758,8 +758,8 @@ describe('CountryInput', () => {
       )
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
-      expect(submitButton).toHaveClass('disabled:bg-gray-300')
-      expect(submitButton).toHaveClass('disabled:cursor-not-allowed')
+      expect(submitButton).toHaveClass('disabled:opacity-50')
+      expect(submitButton).toHaveClass('disabled:pointer-events-none')
     })
   })
 })

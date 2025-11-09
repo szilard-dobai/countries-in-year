@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import type { CalendarData } from '../lib/types'
 import { exportToJSON } from '../lib/storage'
+import { Button } from '@/components/ui/button'
+import { Download, CheckCircle2, XCircle } from 'lucide-react'
 
 interface ExportButtonProps {
   calendarData: CalendarData
@@ -41,31 +43,39 @@ export default function ExportButton({
   }
 
   const hasData = calendarData.visits.length > 0
-  const buttonText =
-    status === 'success'
-      ? 'Exported!'
-      : status === 'error'
-        ? 'Export failed'
-        : 'Export as JSON'
 
   return (
-    <button
+    <Button
       onClick={handleExport}
       disabled={!hasData || status !== 'idle'}
-      className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${
-        !hasData
-          ? 'bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-          : status === 'success'
-            ? 'bg-green-600 text-white'
-            : status === 'error'
-              ? 'bg-red-600 text-white'
-              : 'bg-blue-600 hover:bg-blue-700 text-white'
-      }`}
+      className="w-full"
+      variant={
+        status === 'success'
+          ? 'default'
+          : status === 'error'
+            ? 'destructive'
+            : 'default'
+      }
       aria-label={
         hasData ? 'Export calendar data as JSON' : 'No data to export'
       }
     >
-      {buttonText}
-    </button>
+      {status === 'success' ? (
+        <>
+          <CheckCircle2 className="size-4" />
+          Exported!
+        </>
+      ) : status === 'error' ? (
+        <>
+          <XCircle className="size-4" />
+          Export failed
+        </>
+      ) : (
+        <>
+          <Download className="size-4" />
+          Export as JSON
+        </>
+      )}
+    </Button>
   )
 }

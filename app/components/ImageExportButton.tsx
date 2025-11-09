@@ -1,5 +1,7 @@
 import { useState, RefObject } from 'react'
 import { toJpeg } from 'html-to-image'
+import { Button } from '@/components/ui/button'
+import { Image, CheckCircle2, XCircle, Loader2 } from 'lucide-react'
 
 interface ImageExportButtonProps {
   calendarRef: RefObject<HTMLDivElement | null>
@@ -57,46 +59,45 @@ export default function ImageExportButton({
     }
   }
 
-  const buttonText =
-    status === 'loading'
-      ? 'Generating...'
-      : status === 'success'
-        ? 'Downloaded!'
-        : status === 'error'
-          ? 'Export failed'
-          : 'Export as Image'
-
   const isDisabled = !hasData || status === 'loading'
 
-  const getButtonClassName = () => {
-    if (!hasData && status !== 'loading') {
-      return 'bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-    }
-    if (status === 'loading') {
-      return 'bg-blue-500 text-white cursor-wait'
-    }
-    if (status === 'success') {
-      return 'bg-green-600 text-white'
-    }
-    if (status === 'error') {
-      return 'bg-red-600 text-white'
-    }
-    return 'bg-purple-600 hover:bg-purple-700 text-white'
-  }
-
   return (
-    <button
+    <Button
       onClick={handleExport}
       disabled={isDisabled}
-      className={`w-full px-4 py-2 rounded-lg font-medium transition-colors ${getButtonClassName()}`}
+      className="w-full"
+      variant={
+        status === 'success'
+          ? 'default'
+          : status === 'error'
+            ? 'destructive'
+            : 'secondary'
+      }
       aria-label={
         hasData ? 'Export calendar as JPEG image' : 'No data to export'
       }
     >
-      {status === 'loading' && (
-        <span className="inline-block mr-2 animate-spin">⏳</span>
+      {status === 'loading' ? (
+        <>
+          <Loader2 className="size-4 animate-spin" />
+          Generating...
+        </>
+      ) : status === 'success' ? (
+        <>
+          <CheckCircle2 className="size-4" />
+          Downloaded!
+        </>
+      ) : status === 'error' ? (
+        <>
+          <XCircle className="size-4" />
+          Export failed
+        </>
+      ) : (
+        <>
+          <Image className="size-4" />
+          Export as Image
+        </>
       )}
-      {buttonText}
-    </button>
+    </Button>
   )
 }

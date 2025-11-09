@@ -10,6 +10,14 @@ import ImportButton from './components/ImportButton'
 import ImageExportButton from './components/ImageExportButton'
 import Statistics from './components/Statistics'
 import DeveloperMode from './components/DeveloperMode'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
 function getInitialData(): CalendarData {
   if (typeof window === 'undefined') {
@@ -43,21 +51,25 @@ export default function Home() {
             <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
               Countries in Year
             </h1>
-            <select
-              className="pl-4 pr-10 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-zinc-900 text-gray-900 dark:text-white"
-              value={selectedYear}
-              onChange={(e) => setSelectedYear(Number(e.target.value))}
+            <Select
+              value={selectedYear.toString()}
+              onValueChange={(value) => setSelectedYear(Number(value))}
             >
-              <option value={new Date().getFullYear()}>
-                {new Date().getFullYear()}
-              </option>
-              <option value={new Date().getFullYear() - 1}>
-                {new Date().getFullYear() - 1}
-              </option>
-              <option value={new Date().getFullYear() + 1}>
-                {new Date().getFullYear() + 1}
-              </option>
-            </select>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="Select year" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={(new Date().getFullYear() - 1).toString()}>
+                  {new Date().getFullYear() - 1}
+                </SelectItem>
+                <SelectItem value={new Date().getFullYear().toString()}>
+                  {new Date().getFullYear()}
+                </SelectItem>
+                <SelectItem value={(new Date().getFullYear() + 1).toString()}>
+                  {new Date().getFullYear() + 1}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </header>
@@ -74,25 +86,29 @@ export default function Home() {
           </div>
 
           <aside className="space-y-6">
-            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
-              <Statistics calendarData={calendarData} year={selectedYear} />
-            </div>
+            <Card>
+              <CardContent className="pt-6">
+                <Statistics calendarData={calendarData} year={selectedYear} />
+              </CardContent>
+            </Card>
 
-            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
-              <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                Add Visit
-              </h2>
-              <CountryInput
-                calendarData={calendarData}
-                onDataChange={handleDataChange}
-              />
-            </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Add Visit</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CountryInput
+                  calendarData={calendarData}
+                  onDataChange={handleDataChange}
+                />
+              </CardContent>
+            </Card>
 
-            <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
-              <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-                Data Management
-              </h2>
-              <div className="space-y-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Data Management</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
                 <ExportButton calendarData={calendarData} />
                 <ImportButton
                   currentData={calendarData}
@@ -103,8 +119,8 @@ export default function Home() {
                   year={selectedYear}
                   hasData={calendarData.visits.length > 0}
                 />
-              </div>
-            </div>
+              </CardContent>
+            </Card>
           </aside>
         </div>
       </main>

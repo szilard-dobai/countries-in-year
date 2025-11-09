@@ -5,6 +5,10 @@ import type { CalendarData, Country } from '../lib/types'
 import { searchCountries } from '../lib/countries'
 import { expandDateRange, canAddVisitToDate } from '../lib/calendar'
 import { generateId } from '../lib/utils'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Plus } from 'lucide-react'
 
 interface CountryInputProps {
   calendarData: CalendarData
@@ -91,81 +95,65 @@ export default function CountryInput({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="relative">
-        <label
-          htmlFor="country-search"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
-          Country
-        </label>
-        <input
+      <div className="relative space-y-2">
+        <Label htmlFor="country-search">Country</Label>
+        <Input
           id="country-search"
           type="text"
           value={searchQuery}
           onChange={(e) => handleSearchChange(e.target.value)}
           onFocus={() => setShowDropdown(searchQuery.length > 0)}
           placeholder="Search countries..."
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-zinc-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         {showDropdown && filteredCountries.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-white dark:bg-zinc-900 border border-gray-300 dark:border-gray-700 rounded-lg shadow-lg max-h-60 overflow-auto">
+          <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-auto">
             {filteredCountries.slice(0, 10).map((country) => (
-              <button
+              <Button
                 key={country.code}
                 type="button"
+                variant="ghost"
                 onClick={() => handleCountrySelect(country)}
-                className="w-full px-3 py-2 text-left hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-900 dark:text-white"
+                className="w-full justify-start"
               >
                 {country.name}
-              </button>
+              </Button>
             ))}
           </div>
         )}
       </div>
 
-      <div>
-        <label
-          htmlFor="start-date"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
-          Start Date
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="start-date">Start Date</Label>
+        <Input
           id="start-date"
           type="date"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-zinc-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
-      <div>
-        <label
-          htmlFor="end-date"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
-          End Date (Optional)
-        </label>
-        <input
+      <div className="space-y-2">
+        <Label htmlFor="end-date">End Date (Optional)</Label>
+        <Input
           id="end-date"
           type="date"
           value={endDate}
           onChange={(e) => setEndDate(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-zinc-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
       </div>
 
       {error && (
-        <div className="text-sm text-red-600 dark:text-red-400">{error}</div>
+        <div className="text-sm text-destructive">{error}</div>
       )}
 
-      <button
+      <Button
         type="submit"
         disabled={!selectedCountry || !startDate}
-        className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed transition-colors"
+        className="w-full"
       >
+        <Plus className="size-4" />
         Add Visit
-      </button>
+      </Button>
     </form>
   )
 }
