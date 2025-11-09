@@ -1,24 +1,17 @@
 'use client'
 
-import { useState } from 'react'
 import type { CalendarData } from '../lib/types'
-import { loadCalendarData } from '../lib/storage'
 import MonthGrid from './MonthGrid'
 
 interface CalendarGridProps {
   year: number
+  calendarData: CalendarData
 }
 
-function getInitialData(): CalendarData {
-  if (typeof window === 'undefined') {
-    return { visits: [] }
-  }
-  return loadCalendarData() || { visits: [] }
-}
-
-export default function CalendarGrid({ year }: CalendarGridProps) {
-  const [calendarData] = useState<CalendarData>(getInitialData)
-
+export default function CalendarGrid({
+  year,
+  calendarData,
+}: CalendarGridProps) {
   const visits = calendarData.visits
 
   return (

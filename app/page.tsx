@@ -1,13 +1,28 @@
 'use client'
 
 import { useState } from 'react'
+import type { CalendarData } from './lib/types'
+import { loadCalendarData, saveCalendarData } from './lib/storage'
 import CalendarGrid from './components/CalendarGrid'
 import CountryInput from './components/CountryInput'
 import ExportButton from './components/ExportButton'
 import DeveloperMode from './components/DeveloperMode'
 
+function getInitialData(): CalendarData {
+  if (typeof window === 'undefined') {
+    return { visits: [] }
+  }
+  return loadCalendarData() || { visits: [] }
+}
+
 export default function Home() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const [calendarData, setCalendarData] = useState<CalendarData>(getInitialData)
+
+  const handleDataChange = (newData: CalendarData) => {
+    setCalendarData(newData)
+    saveCalendarData(newData)
+  }
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950">
@@ -39,7 +54,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
           <div className="space-y-6">
-            <CalendarGrid year={selectedYear} />
+            <CalendarGrid year={selectedYear} calendarData={calendarData} />
           </div>
 
           <aside className="space-y-6">
@@ -47,7 +62,10 @@ export default function Home() {
               <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
                 Add Visit
               </h2>
-              <CountryInput />
+              <CountryInput
+                calendarData={calendarData}
+                onDataChange={handleDataChange}
+              />
             </div>
 
             <div className="rounded-lg border border-gray-200 dark:border-gray-800 p-4">
