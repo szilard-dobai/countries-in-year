@@ -6,7 +6,6 @@ import { searchCountries } from '../lib/countries'
 import { expandDateRange, canAddVisitToDate } from '../lib/calendar'
 import { generateId } from '../lib/utils'
 import { Button } from '@/app/components/ui/button'
-import { Input } from '@/app/components/ui/input'
 import { Label } from '@/app/components/ui/label'
 import { Calendar } from '@/app/components/ui/calendar'
 import {
@@ -14,8 +13,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/app/components/ui/popover'
-import { Plus, CalendarIcon, X } from 'lucide-react'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/app/components/ui/command'
+import { Plus, CalendarIcon, X, Check, ChevronsUpDown } from 'lucide-react'
 import { format } from 'date-fns'
+import { cn } from '@/app/lib/utils'
 import type { DateRange } from 'react-day-picker'
 
 interface CountryInputProps {
@@ -27,27 +35,11 @@ export default function CountryInput({
   calendarData,
   onDataChange,
 }: CountryInputProps) {
-  const [searchQuery, setSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null)
   const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState('')
-  const [showDropdown, setShowDropdown] = useState(false)
   const [isCalendarOpen, setIsCalendarOpen] = useState(false)
-
-  const filteredCountries =
-    searchQuery.length > 0 ? searchCountries(searchQuery) : []
-
-  const handleCountrySelect = (country: Country) => {
-    setSelectedCountry(country)
-    setSearchQuery(country.name)
-    setShowDropdown(false)
-  }
-
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value)
-    setSelectedCountry(null)
-    setShowDropdown(value.length > 0)
-  }
+  const [isCountryOpen, setIsCountryOpen] = useState(false)
 
   const handleDateSelect = (range: DateRange | undefined) => {
     setDateRange(range)
@@ -113,40 +105,60 @@ export default function CountryInput({
 
     onDataChange(newData)
 
-    setSearchQuery('')
     setSelectedCountry(null)
     setDateRange(undefined)
     setError('')
     setIsCalendarOpen(false)
+    setIsCountryOpen(false)
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="relative space-y-2">
-        <Label htmlFor="country-search">Country</Label>
-        <Input
-          id="country-search"
-          type="text"
-          value={searchQuery}
-          onChange={(e) => handleSearchChange(e.target.value)}
-          onFocus={() => setShowDropdown(searchQuery.length > 0)}
-          placeholder="Search countries..."
-        />
-        {showDropdown && filteredCountries.length > 0 && (
-          <div className="absolute z-10 w-full mt-1 bg-popover border rounded-md shadow-md max-h-60 overflow-auto">
-            {filteredCountries.slice(0, 10).map((country) => (
-              <Button
-                key={country.code}
-                type="button"
-                variant="ghost"
-                onClick={() => handleCountrySelect(country)}
-                className="w-full justify-start"
-              >
-                {country.name}
-              </Button>
-            ))}
-          </div>
-        )}
+      <div className="space-y-2">
+        <Label>Country</Label>
+        <Popover open={isCountryOpen} onOpenChange={setIsCountryOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={isCountryOpen}
+              className="w-full justify-between font-normal"
+            >
+              {selectedCountry ? selectedCountry.name : 'Select country...'}
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Search countries..." />
+              <CommandList>
+                <CommandEmpty>No country found.</CommandEmpty>
+                <CommandGroup>
+                  {searchCountries('').map((country) => (
+                    <CommandItem
+                      key={country.code}
+                      value={country.name}
+                      onSelect={() => {
+                        setSelectedCountry(country)
+                        setIsCountryOpen(false)
+                      }}
+                    >
+                      <Check
+                        className={cn(
+                          'mr-2 h-4 w-4',
+                          selectedCountry?.code === country.code
+                            ? 'opacity-100'
+                            : 'opacity-0'
+                        )}
+                      />
+                      {country.name}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="space-y-2">
