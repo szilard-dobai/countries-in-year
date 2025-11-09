@@ -32,6 +32,44 @@ vi.mock('../lib/utils', async () => {
   }
 })
 
+vi.mock('@/app/components/ui/calendar', () => ({
+  Calendar: ({
+    mode,
+    selected,
+    onSelect,
+  }: {
+    mode: string
+    selected: any
+    onSelect: (range: any) => void
+  }) => (
+    <div data-testid="mock-calendar">
+      <button
+        type="button"
+        onClick={() =>
+          onSelect({
+            from: new Date(2024, 0, 15),
+            to: mode === 'range' ? new Date(2024, 0, 20) : undefined,
+          })
+        }
+      >
+        Select Date
+      </button>
+    </div>
+  ),
+}))
+
+vi.mock('@/app/components/ui/popover', () => ({
+  Popover: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="mock-popover">{children}</div>
+  ),
+  PopoverTrigger: ({ children }: { children: React.ReactNode }) => (
+    <div>{children}</div>
+  ),
+  PopoverContent: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="popover-content">{children}</div>
+  ),
+}))
+
 describe('CountryInput', () => {
   const mockOnDataChange = vi.fn()
   const mockCalendarData: CalendarData = {
@@ -70,7 +108,7 @@ describe('CountryInput', () => {
       ).toBeInTheDocument()
     })
 
-    it('renders start date input', () => {
+    it('renders date range picker', () => {
       render(
         <CountryInput
           calendarData={mockCalendarData}
@@ -78,14 +116,11 @@ describe('CountryInput', () => {
         />
       )
 
-      expect(screen.getByLabelText(/start date/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/start date/i)).toHaveAttribute(
-        'type',
-        'date'
-      )
+      expect(screen.getByText('Date Range')).toBeInTheDocument()
+      expect(screen.getByText(/pick a date/i)).toBeInTheDocument()
     })
 
-    it('renders end date input with optional label', () => {
+    it('renders calendar popover trigger button', () => {
       render(
         <CountryInput
           calendarData={mockCalendarData}
@@ -94,12 +129,8 @@ describe('CountryInput', () => {
       )
 
       expect(
-        screen.getByLabelText(/end date \(optional\)/i)
+        screen.getByRole('button', { name: /pick a date/i })
       ).toBeInTheDocument()
-      expect(screen.getByLabelText(/end date \(optional\)/i)).toHaveAttribute(
-        'type',
-        'date'
-      )
     })
 
     it('renders submit button', () => {
@@ -268,7 +299,7 @@ describe('CountryInput', () => {
       })
     })
 
-    it('enables submit button when country and start date are selected', async () => {
+    it('enables submit button when country and date are selected', async () => {
       const user = userEvent.setup()
       vi.mocked(countries.searchCountries).mockReturnValue(mockCountries)
 
@@ -287,12 +318,19 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-15')
+      // Click the date picker button to open it
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
 
-      expect(
-        screen.getByRole('button', { name: /add visit/i })
-      ).not.toBeDisabled()
+      // Select a date from the mock calendar
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /add visit/i })
+        ).not.toBeDisabled()
+      })
     })
 
     it('clears selected country when search query changes', async () => {
@@ -335,7 +373,7 @@ describe('CountryInput', () => {
       expect(submitButton).toBeDisabled()
     })
 
-    it('shows error when submitting without start date', async () => {
+    it('shows error when submitting without date', async () => {
       const user = userEvent.setup()
 
       render(
@@ -349,7 +387,7 @@ describe('CountryInput', () => {
       expect(submitButton).toBeDisabled()
     })
 
-    it('shows error when end date is before start date', async () => {
+    it('date picker button shows selected date range', async () => {
       const user = userEvent.setup()
       vi.mocked(countries.searchCountries).mockReturnValue(mockCountries)
 
@@ -367,18 +405,17 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-20')
+      // Click the date picker button
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
 
-      const endDateInput = screen.getByLabelText(/end date/i)
-      await user.type(endDateInput, '2024-01-15')
-
-      const submitButton = screen.getByRole('button', { name: /add visit/i })
-      await user.click(submitButton)
+      // Select a date
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       await waitFor(() => {
         expect(
-          screen.getByText(/end date cannot be before start date/i)
+          screen.getByText(/Jan 15, 2024 - Jan 20, 2024/i)
         ).toBeInTheDocument()
       })
     })
@@ -405,8 +442,11 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-15')
+      // Open calendar and select date
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
       await user.click(submitButton)
@@ -441,8 +481,11 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-15')
+      // Open calendar and select date
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
       await user.click(submitButton)
@@ -488,11 +531,11 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-15')
-
-      const endDateInput = screen.getByLabelText(/end date/i)
-      await user.type(endDateInput, '2024-01-17')
+      // Open calendar and select date range
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
       await user.click(submitButton)
@@ -538,8 +581,11 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-15')
+      // Open calendar and select date
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
       await user.click(submitButton)
@@ -579,15 +625,18 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-15')
+      // Open calendar and select date
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
       await user.click(submitButton)
 
       await waitFor(() => {
         expect(countryInput).toHaveValue('')
-        expect(startDateInput).toHaveValue('')
+        expect(screen.getByText(/pick a date/i)).toBeInTheDocument()
       })
     })
 
@@ -615,8 +664,11 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-15')
+      // Select first date
+      let datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
+      let selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
       await user.click(submitButton)
@@ -627,8 +679,11 @@ describe('CountryInput', () => {
         ).toBeInTheDocument()
       })
 
-      await user.clear(startDateInput)
-      await user.type(startDateInput, '2024-01-16')
+      // Select different date
+      datePickerButton = screen.getByRole('button', { name: /Jan 15, 2024/i })
+      await user.click(datePickerButton)
+      selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
       await user.click(submitButton)
 
       await waitFor(() => {
@@ -643,6 +698,8 @@ describe('CountryInput', () => {
     it('displays error messages in red', async () => {
       const user = userEvent.setup()
       vi.mocked(countries.searchCountries).mockReturnValue(mockCountries)
+      vi.mocked(calendar.expandDateRange).mockReturnValue([new Date(2024, 0, 15)])
+      vi.mocked(calendar.canAddVisitToDate).mockReturnValue(false)
 
       render(
         <CountryInput
@@ -658,18 +715,18 @@ describe('CountryInput', () => {
       const usaButton = screen.getByRole('button', { name: 'United States' })
       await user.click(usaButton)
 
-      const startDateInput = screen.getByLabelText(/start date/i)
-      await user.type(startDateInput, '2024-01-20')
-
-      const endDateInput = screen.getByLabelText(/end date/i)
-      await user.type(endDateInput, '2024-01-15')
+      // Open calendar and select date
+      const datePickerButton = screen.getByRole('button', { name: /pick a date/i })
+      await user.click(datePickerButton)
+      const selectDateButton = screen.getByRole('button', { name: 'Select Date' })
+      await user.click(selectDateButton)
 
       const submitButton = screen.getByRole('button', { name: /add visit/i })
       await user.click(submitButton)
 
       await waitFor(() => {
         const errorMessage = screen.getByText(
-          /end date cannot be before start date/i
+          /maximum 2 countries per day exceeded/i
         )
         expect(errorMessage).toHaveClass('text-destructive')
       })
@@ -697,8 +754,7 @@ describe('CountryInput', () => {
       )
 
       expect(screen.getByLabelText(/country/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/start date/i)).toBeInTheDocument()
-      expect(screen.getByLabelText(/end date/i)).toBeInTheDocument()
+      expect(screen.getByText('Date Range')).toBeInTheDocument()
     })
 
     it('submit button has proper type', () => {

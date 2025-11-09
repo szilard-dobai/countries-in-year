@@ -8,7 +8,15 @@ import { generateId } from '../lib/utils'
 import { Button } from '@/app/components/ui/button'
 import { Input } from '@/app/components/ui/input'
 import { Label } from '@/app/components/ui/label'
-import { Plus } from 'lucide-react'
+import { Calendar } from '@/app/components/ui/calendar'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/app/components/ui/popover'
+import { Plus, CalendarIcon, X } from 'lucide-react'
+import { format } from 'date-fns'
+import type { DateRange } from 'react-day-picker'
 
 interface CountryInputProps {
   calendarData: CalendarData
@@ -21,10 +29,10 @@ export default function CountryInput({
 }: CountryInputProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null)
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [error, setError] = useState('')
   const [showDropdown, setShowDropdown] = useState(false)
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false)
 
   const filteredCountries =
     searchQuery.length > 0 ? searchCountries(searchQuery) : []
@@ -41,6 +49,25 @@ export default function CountryInput({
     setShowDropdown(value.length > 0)
   }
 
+  const handleDateSelect = (range: DateRange | undefined) => {
+    setDateRange(range)
+  }
+
+  const handleClearDates = () => {
+    setDateRange(undefined)
+    setIsCalendarOpen(false)
+  }
+
+  const getDateRangeText = () => {
+    if (!dateRange?.from) {
+      return 'Pick a date'
+    }
+    if (dateRange.to) {
+      return `${format(dateRange.from, 'MMM d, yyyy')} - ${format(dateRange.to, 'MMM d, yyyy')}`
+    }
+    return format(dateRange.from, 'MMM d, yyyy')
+  }
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
@@ -50,13 +77,13 @@ export default function CountryInput({
       return
     }
 
-    if (!startDate) {
-      setError('Please select a start date')
+    if (!dateRange?.from) {
+      setError('Please select a date')
       return
     }
 
-    const start = new Date(startDate)
-    const end = endDate ? new Date(endDate) : start
+    const start = dateRange.from
+    const end = dateRange.to || start
 
     if (end < start) {
       setError('End date cannot be before start date')
@@ -88,9 +115,9 @@ export default function CountryInput({
 
     setSearchQuery('')
     setSelectedCountry(null)
-    setStartDate('')
-    setEndDate('')
+    setDateRange(undefined)
     setError('')
+    setIsCalendarOpen(false)
   }
 
   return (
@@ -123,23 +150,40 @@ export default function CountryInput({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="start-date">Start Date</Label>
-        <Input
-          id="start-date"
-          type="date"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="end-date">End Date (Optional)</Label>
-        <Input
-          id="end-date"
-          type="date"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-        />
+        <Label>Date Range</Label>
+        <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-start text-left font-normal"
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {getDateRangeText()}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <div className="p-3 border-b flex items-center justify-between">
+              <p className="text-sm font-medium">Select date range</p>
+              {dateRange?.from && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearDates}
+                  className="h-7 px-2"
+                >
+                  <X className="h-3 w-3" />
+                  Clear
+                </Button>
+              )}
+            </div>
+            <Calendar
+              mode="range"
+              selected={dateRange}
+              onSelect={handleDateSelect}
+              numberOfMonths={2}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {error && (
@@ -148,7 +192,7 @@ export default function CountryInput({
 
       <Button
         type="submit"
-        disabled={!selectedCountry || !startDate}
+        disabled={!selectedCountry || !dateRange?.from}
         className="w-full"
       >
         <Plus className="size-4" />
