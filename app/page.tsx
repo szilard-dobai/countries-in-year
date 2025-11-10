@@ -18,7 +18,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/app/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card'
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from '@/app/components/ui/card'
 
 function getInitialData(): CalendarData {
   if (typeof window === 'undefined') {
@@ -30,7 +35,8 @@ function getInitialData(): CalendarData {
 export default function Home() {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
   const [calendarData, setCalendarData] = useState<CalendarData>(getInitialData)
-  const [flagDisplayMode, setFlagDisplayMode] = useState<FlagDisplayMode>('emoji')
+  const [flagDisplayMode, setFlagDisplayMode] =
+    useState<FlagDisplayMode>('emoji')
   const calendarRef = useRef<HTMLDivElement>(null)
 
   const handleDataChange = (newData: CalendarData) => {
@@ -94,33 +100,6 @@ export default function Home() {
           </div>
 
           <aside className="space-y-4">
-            <Card className="border-0 shadow-lg bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <span className="text-2xl">📊</span>
-                  Statistics
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Statistics calendarData={calendarData} year={selectedYear} />
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-lg">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <span className="text-2xl">⚙️</span>
-                  Settings
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Settings
-                  flagDisplayMode={flagDisplayMode}
-                  onFlagDisplayModeChange={setFlagDisplayMode}
-                />
-              </CardContent>
-            </Card>
-
             <Card className="border-0 shadow-lg">
               <CardHeader className="pb-3">
                 <CardTitle className="text-lg flex items-center gap-2">
@@ -133,6 +112,18 @@ export default function Home() {
                   calendarData={calendarData}
                   onDataChange={handleDataChange}
                 />
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-950/20 dark:to-purple-950/20">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-2xl">📊</span>
+                  Statistics
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Statistics calendarData={calendarData} year={selectedYear} />
               </CardContent>
             </Card>
 
@@ -153,6 +144,21 @@ export default function Home() {
                   calendarRef={calendarRef}
                   year={selectedYear}
                   hasData={calendarData.visits.length > 0}
+                />
+              </CardContent>
+            </Card>
+
+            <Card className="border-0 shadow-lg">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <span className="text-2xl">⚙️</span>
+                  Settings
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Settings
+                  flagDisplayMode={flagDisplayMode}
+                  onFlagDisplayModeChange={setFlagDisplayMode}
                 />
               </CardContent>
             </Card>
