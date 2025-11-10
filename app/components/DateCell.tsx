@@ -22,7 +22,6 @@ function DateCell({ date, visits, onRemoveVisit, flagDisplayMode }: DateCellProp
   const dayNumber = date.getDate()
   const hasVisits = cellVisits.length > 0
 
-  const country = cellVisits[0] ? getCountryByCode(cellVisits[0].countryCode) : null
   const dateLabel = date.toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
@@ -52,20 +51,47 @@ function DateCell({ date, visits, onRemoveVisit, flagDisplayMode }: DateCellProp
     return <div className="text-lg sm:text-2xl leading-none">{getFlagEmoji(countryCode)}</div>
   }
 
+  const hasTwoCountries = cellVisits.length === 2
+  const allCountries = cellVisits.map(v => getCountryByCode(v.countryCode)?.name || v.countryCode).join(', ')
+
   return (
     <div
       className="aspect-square p-0.5 sm:p-1 flex items-center justify-center group relative"
       role="gridcell"
-      aria-label={hasVisits ? `${dateLabel}, visited ${country?.name || cellVisits[0].countryCode}` : `${dateLabel}, no visits`}
+      aria-label={hasVisits ? `${dateLabel}, visited ${allCountries}` : `${dateLabel}, no visits`}
     >
       <div className="relative flex flex-col items-center justify-center w-full h-full">
         {hasVisits ? (
           <>
-            {renderFlag(cellVisits[0].countryCode)}
+            {hasTwoCountries ? (
+              // Two countries: stack vertically like ½ symbol
+              <div className="flex flex-col items-center justify-center gap-0 w-full h-full">
+                <div className="flex-1 flex items-center justify-center w-full">
+                  {flagDisplayMode === 'icon' ? (
+                    getFlagIcon(cellVisits[0].countryCode)
+                  ) : (
+                    <div className="text-sm sm:text-lg leading-none">{getFlagEmoji(cellVisits[0].countryCode)}</div>
+                  )}
+                </div>
+                <div className="flex-1 flex items-center justify-center w-full">
+                  {flagDisplayMode === 'icon' ? (
+                    getFlagIcon(cellVisits[1].countryCode)
+                  ) : (
+                    <div className="text-sm sm:text-lg leading-none">{getFlagEmoji(cellVisits[1].countryCode)}</div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              // Single country: centered
+              renderFlag(cellVisits[0].countryCode)
+            )}
             <button
-              onClick={() => onRemoveVisit(cellVisits[0].id)}
+              onClick={() => {
+                // Remove all visits for this date
+                cellVisits.forEach(visit => onRemoveVisit(visit.id))
+              }}
               className="absolute inset-0 opacity-0 group-hover:opacity-100 bg-red-600/90 rounded flex items-center justify-center text-white text-xs font-bold cursor-pointer transition-opacity"
-              aria-label={`Remove ${country?.name || cellVisits[0].countryCode} visit`}
+              aria-label={`Remove visits: ${allCountries}`}
             >
               ×
             </button>
