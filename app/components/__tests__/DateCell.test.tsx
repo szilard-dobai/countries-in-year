@@ -203,7 +203,7 @@ describe('DateCell', () => {
       expect(absoluteContainers.length).toBeGreaterThanOrEqual(2)
     })
 
-    it('should have diagonal separator line between flags', () => {
+    it('should use clip-path for clean diagonal split', () => {
       const date = new Date(2025, 1, 2)
       const { container } = render(
         <DateCell
@@ -218,9 +218,9 @@ describe('DateCell', () => {
       const splitContainer = container.querySelector('.relative.w-full.h-full')
       expect(splitContainer).toBeInTheDocument()
 
-      // Check for the diagonal line separator (should have linear-gradient background)
-      const separator = container.querySelector('.pointer-events-none')
-      expect(separator).toBeInTheDocument()
+      // Check for overflow-hidden on clip-path containers
+      const overflowContainers = container.querySelectorAll('.overflow-hidden')
+      expect(overflowContainers.length).toBeGreaterThanOrEqual(2)
     })
 
     it('should remove all visits when delete button is clicked', async () => {

@@ -72,7 +72,7 @@ function DateCell({ date, visits, onRemoveVisit, flagDisplayMode }: DateCellProp
                   style={{ clipPath: 'polygon(0 0, 100% 0, 0 100%)' }}
                 >
                   {flagDisplayMode === 'icon' ? (
-                    <div className="scale-75">{getFlagIcon(cellVisits[0].countryCode)}</div>
+                    getFlagIcon(cellVisits[0].countryCode)
                   ) : (
                     <div className="text-base sm:text-xl leading-none">{getFlagEmoji(cellVisits[0].countryCode)}</div>
                   )}
@@ -83,18 +83,11 @@ function DateCell({ date, visits, onRemoveVisit, flagDisplayMode }: DateCellProp
                   style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
                 >
                   {flagDisplayMode === 'icon' ? (
-                    <div className="scale-75">{getFlagIcon(cellVisits[1].countryCode)}</div>
+                    getFlagIcon(cellVisits[1].countryCode)
                   ) : (
                     <div className="text-base sm:text-xl leading-none">{getFlagEmoji(cellVisits[1].countryCode)}</div>
                   )}
                 </div>
-                {/* Diagonal line separator */}
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  style={{
-                    background: 'linear-gradient(to bottom right, transparent calc(50% - 0.5px), rgba(0,0,0,0.1) calc(50% - 0.5px), rgba(0,0,0,0.1) calc(50% + 0.5px), transparent calc(50% + 0.5px))'
-                  }}
-                />
               </div>
             ) : (
               // Single country: centered
